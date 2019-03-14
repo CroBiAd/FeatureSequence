@@ -259,6 +259,12 @@ return declare( JBrowsePlugin,
         var subfeatures = [];
 
 	    feature.get('subfeatures').forEach(function(f, ind) {
+                var subf_type = f.get('type');
+                if (subf_type.toLowerCase() === 'exon') {
+                    // Skip any exon features as the GFF3 files define both CDS as well as five_prime_UTR and three_prime_UTR features which make up an exon
+                    // Doing so, avoids any overlapping features which results in FeatureSequence plugin resorting to an old display approach which causes display speed issues
+                    return;
+                }
 
 		    var subfeat_coords = [f.get('start'), f.get('end')]
                 .sort(function(a,b){return a-b;}); //swap if out of order
@@ -273,7 +279,6 @@ return declare( JBrowsePlugin,
 		    }
 
 		    var subf_strand = f.get('strand');
-		    var subf_type = f.get('type');
 
 		    var subf_obj = {'start':subf_start, 'end':subf_end, 'strand':subf_strand, 'type':subf_type, 'id': subf_type+'_'+(ind+1)};
 
@@ -396,14 +401,17 @@ return declare( JBrowsePlugin,
       
         //console.log("Filling in the middle bits");
         for (i = 0; i < subfeatures.length - 1; i++) {
+            var newType = defaultType;
 
-            //If current and next subfeature are the same and are 'exon' or 'CDS', type is intron
-            if (subfeatures[i].type.toLowerCase() === "cds" && subfeatures[i+1].type.toLowerCase() === "cds") {
-                var newType = 'intron';
-            } else if (subfeatures[i].type.toLowerCase() === "exon" && subfeatures[i+1].type.toLowerCase() === "exon") {
-                var newType = 'intron';
-            } else {
-                var newType = defaultType;
+            // If neighbouring features are of the same type and are any of the those which comprise exons,
+            // then define an intron between them
+            if (subfeatures[i].type.toLowerCase() === subfeatures[i+1].type.toLowerCase()) {
+                // The neighbouring features are the same
+                switch( subfeatures[i].type.toLowerCase() ){
+                    case 'cds': case 'exon': case 'utr': case 'three_prime_utr': case 'five_prime_utr':
+                        newType = 'intron';
+                        break;
+                }
             }
 
             //Do the actual filling in: create feature and push to array

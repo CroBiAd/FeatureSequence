@@ -257,14 +257,15 @@ return declare( null,
             	id: type+'SeqMenu',
                 options: [
 	                { label: "Select View", value: "-1" , selected:true},
-                    { label: "500 bp", value: "0" },
-                    { label: "1000 bp", value: "1"},
-                    { label: "1500 bp", value: "2"},
-                    { label: "2000 bp", value: "3"},
-                    { label: "2500 bp", value: "4"},
-                    { label: "3000 bp", value: "5"}, 
-                    { label: "3500 bp", value: "6"},
-                    { label: "4000 bp", value: "7"}
+                    { label: "100 bp", value: "0" },
+                    { label: "500 bp", value: "1" },
+                    { label: "1000 bp", value: "2"},
+                    { label: "1500 bp", value: "3"},
+                    { label: "2000 bp", value: "4"},
+                    { label: "2500 bp", value: "5"},
+                    { label: "3000 bp", value: "6"},
+                    { label: "3500 bp", value: "7"},
+                    { label: "4000 bp", value: "8"}
                 ]
             });
 
